@@ -1,14 +1,13 @@
 import BasicButton from "../components/buttons/BasicButton";
 import { useForm } from "react-hook-form";
 
-import { Link, useNavigate } from "react-router-dom";
-import { UserWithEmailAndPassword } from "../hooks/database";
+import { Link } from "react-router-dom";
+import { CreateEmailAndPassword } from "../hooks/database";
 import { useContext } from "react";
 import { UserContext } from "../context/UserProvider";
 
 export default function Register() {
-  const { setSuccess } = useContext(UserContext);
-  const navigate = useNavigate();
+  const { setSuccess, success } = useContext(UserContext);
   const {
     register,
     handleSubmit,
@@ -16,11 +15,10 @@ export default function Register() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data) => {
     try {
-      UserWithEmailAndPassword(data.email, data.password);
+      await CreateEmailAndPassword(data.email, data.password);
       setSuccess(true);
-      navigate("/login");
     } catch (error) {
       console.log(error.message);
     }
@@ -28,6 +26,15 @@ export default function Register() {
 
   return (
     <div>
+      {success && (
+        <div
+          class="text-center p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+          role="alert"
+        >
+          <span class="font-medium">Registro éxitoso!</span> El usuario ha sido
+          registrado de manera correcta.
+        </div>
+      )}
       <div className="h-screen container mx-auto md:flex md:justify-center md:items-center">
         <div className="w-full mt-8 md:mt-0 px-4 md:px-40">
           <div className="flex justify-center mb-4">
@@ -51,102 +58,111 @@ export default function Register() {
               </text>
             </svg>
           </div>
+
+          
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid md:grid-cols-2 md:gap-4 w-full mb-4 md:mb-6">
               <div>
-                {errors.name && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.name.message}
-                  </p>
-                )}
                 <input
                   type="text"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Nombre"
+                  id="name"
+                  className={
+                    errors.name
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={errors.name ? errors.name.message : "Nombre"}
                   {...register("name", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "El nombre es un campo obligatorio",
                     },
                   })}
                 />
               </div>
 
               <div>
-                {errors.lastname && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.lastname.message}
-                  </p>
-                )}
                 <input
-                  type="tel"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Apellido"
+                  type="text"
+                  id="lastname"
+                  className={
+                    errors.lastname
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.lastname ? errors.lastname.message : "Apellido"
+                  }
                   {...register("lastname", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "El apellido es un campo obligatorio",
                     },
                   })}
                 />
               </div>
 
               <div>
-                {errors.email && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.email.message}
-                  </p>
-                )}
                 <input
                   type="text"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Correo electrónico"
+                  className={
+                    errors.email
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.email ? errors.email.message : "Correo eléctronico"
+                  }
                   {...register("email", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "El correo eléctronico es un campo obligatorio",
                     },
                     pattern: {
                       value: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/,
-                      message: "Ingresa un correo eléctroni valido.",
+                      message: "Ingresa un correo eléctronico valido",
                     },
                   })}
                 />
               </div>
 
               <div>
-                {errors.country && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.country.message}
-                  </p>
-                )}
                 <input
                   type="text"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="País"
+                  className={
+                    errors.country
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.country
+                      ? errors.country.message
+                      : "País de residencia"
+                  }
                   {...register("country", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "El país es un campo obligatorio",
                     },
                   })}
                 />
               </div>
 
               <div>
-                {errors.password && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.password.message}
-                  </p>
-                )}
                 <input
                   type="password"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Contraseña"
+                  className={
+                    errors.password
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.password ? errors.password.message : "Contraseña"
+                  }
                   {...register("password", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "La contraseña es un campo obligatorio",
                     },
                     minLength: {
                       value: 8,
@@ -155,59 +171,49 @@ export default function Register() {
                     pattern: {
                       value: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/,
                       message:
-                        "La contraseña debe contener una letra mayúscula y una carácter especial",
+                        "La contraseña debe contener una letra mayúscula y un número",
                     },
                   })}
                 />
               </div>
 
               <div>
-                {errors.repassword && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.repassword.message}
-                  </p>
-                )}
                 <input
                   type="password"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Repetir contraseña"
+                  className={
+                    errors.repassword
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.repassword
+                      ? errors.repassword.message
+                      : "Repetir contraseña"
+                  }
                   {...register("repassword", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
-                    },
-                    minLength: {
-                      value: 6,
-                      message: "Mínimo 6 carácteres en la contraseña",
-                    },
-                    pattern: {
-                      value: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/,
-                      message:
-                        "La contraseña debe contener una letra mayúscula y un número",
-                    },
-                    validate: {
-                      value: value =>
-                      getValues("repassword") !== getValues("password"),
-                      message: "Las  contraseñas no coinciden",
+                      message: "Repetir contraseña es un campo obligatorio",
                     },
                   })}
                 />
               </div>
 
               <div>
-                {errors.phone && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.phone.message}
-                  </p>
-                )}
                 <input
                   type="text"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Teléfono"
+                  className={
+                    errors.phone
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.phone ? errors.phone.message : "Número teléfonico"
+                  }
                   {...register("phone", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "El número teléfonico es campo obligatorio",
                     },
                     pattern: {
                       value: /^[0-9]+/,
@@ -218,24 +224,26 @@ export default function Register() {
               </div>
 
               <div>
-                {errors.area && (
-                  <p className="mb-2 text-sm text-red-600 dark:text-red-500 text-center">
-                    {errors.area.message}
-                  </p>
-                )}
                 <input
                   type="text"
-                  className="focus:outline-none bg-white mb-4 rounded-lg py-2 text-center w-full md:rounded-2xl"
-                  placeholder="Área"
+                  className={
+                    errors.area
+                      ? "bg-red-50 border border-red-500 mb-4 text-red-900 placeholder-red-700 text-sm rounded-2xl focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400"
+                      : "focus:outline-none p-2.5 bg-white mb-4 rounded-lg py-2 w-full md:rounded-2xl"
+                  }
+                  placeholder={
+                    errors.area ? errors.area.message : "Área de intéres"
+                  }
                   {...register("area", {
                     required: {
                       value: true,
-                      message: "Campo obligatorio",
+                      message: "El área de intéres es un campo obligatorio",
                     },
                   })}
                 />
               </div>
             </div>
+
             <div className="md:w-1/2 md:flex md:mx-auto">
               <BasicButton
                 text="Registrarse"
